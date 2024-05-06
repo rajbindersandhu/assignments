@@ -4,6 +4,21 @@
 */
 
 function isPalindrome(str) {
+  let start=0;
+  let end = str.length-1;
+  while(start<end){
+    if((new RegExp("[A-Za-z]")).test(str[start]) && (new RegExp("[A-Za-z]")).test(str[end])){
+      if(str[start].toLowerCase() != str[end].toLowerCase()){
+        return false;
+      }
+      start ++;
+      end --;
+    }else if(!(new RegExp("[A-Za-z]")).test(str[start])){
+      start ++;
+    }else if(!(new RegExp("[A-Za-z]")).test(str[end])){
+      end --;
+    }
+  }
   return true;
 }
 
