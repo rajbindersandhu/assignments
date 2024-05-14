@@ -17,5 +17,46 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
+const port = 3000;
+
+app.get("/files", (req, res) => {
+  let fileList = [];
+  fs.readdir("files/", (err, files) => {
+    if(err){
+      res.send(err);
+    }else{
+      res.status(200).json({
+        "files": files
+      });
+    }   
+  }); 
+});
+
+app.get("/files/:filename",(req, res) => {
+  try{
+    let pathname = req.path;
+    let pathRegExp = new RegExp("\/files\/[a-z]*\.[a-z]*");
+    if(pathRegExp.test(pathname)){
+      if(fs.existsSync(`.${pathname}`)){
+        fs.readFile(`files/${req.params.filename}`, "utf8", (err, data) => {
+            res.status(200).send(data);
+        });
+      }else{
+        res.status(404).send("File not found");
+      }
+    }else{
+      res.status(404).send("Route not found");
+    }
+  }catch(err){
+    res.status(500).send(err);
+  }
+});
+
+app.get(new RegExp("\/.*?"),(req, res) => {
+  res.status(404).send("Route not found");
+})
+
+
+app.listen(port);
 
 module.exports = app;

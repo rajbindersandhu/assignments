@@ -40,10 +40,136 @@
   Testing the server - run `npm run test-todoServer` command in terminal
  */
   const express = require('express');
+  const fs = require("fs");
   const bodyParser = require('body-parser');
   
   const app = express();
   
   app.use(bodyParser.json());
+
+  app.get("/todos", (req, res) => {
+    fs.readFile("todos.json", "utf8", (err, data) => {
+      return res.status(200).json(JSON.parse(data));
+    });
+  });
+
+  app.get("/todos/:id", (req, res) => {
+    let idTodo = req.params.id;
+    fs.readFile("todos.json", "utf8", (err, data) => {
+      let idFound = false;
+      if(err){
+        console.log(err);
+      }else{
+        let dataRec = JSON.parse(data);
+        for(let i=0;i<dataRec.length;i++){
+          if(dataRec[i].id == idTodo){
+            return res.status(200).json(dataRec[i]);
+          }
+        }
+        res.status(404).send(`Task id:${idTodo}, doesnot exist`)
+      }
+      });
+      
+  });
+
+  app.post("/todos", (req, res) => {
+    fs.readFile("todos.json", (err, data) => {
+      let todoList = JSON.parse(data);
+      let newTask ={};
+      newTask["id"] = (todoList.length+1).toString();
+      newTask["title"] = req.body.title;
+      newTask["completed"] = req.body.completed;
+      newTask["description"] = req.body.description;
+      todoList.push(newTask);
+      let jsonString = JSON.stringify(todoList);
+
+      fs.writeFile("todos.json", jsonString, (err) => {
+        if(err){
+          console.log(err);
+          return res.status(404).send(err);
+        }else{
+          console.log(`${jsonString} written to file`)
+          res.status(201).json({"id": newTask["id"]});
+        }
+      })
+    });
+  });
   
+app.put("/todos/:id", (req, res) => {
+  let idTodo = req.params.id;
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    if(err){
+      console.log(err);
+    }else{
+      let jsonList = JSON.parse(data);
+      let task;
+      let foundTask = false;
+      for(let i=0;i<jsonList.length;i++){
+        if(jsonList[i].id == idTodo){
+          task = jsonList.splice(i,1);
+          foundTask = true;
+          break;
+        }
+      }
+      if(foundTask){
+        for (const [key, value] of Object.entries(req.body)){
+          if(Object.keys(task[0]).includes(key)){
+            task[0][key] = value;
+          }
+        }
+        jsonList.push(task[0]);
+        let jsonString = JSON.stringify(jsonList);
+        fs.writeFile("todos.json", jsonString, (err)=>{
+          if(err){
+            console.log(err);
+          }
+        })
+        res.status(200).send(`Task id: ${idTodo} updated`);
+      }else{
+        res.status(404).send("ID not found");
+      }
+      
+    }
+    
+  });
+});
+
+app.delete("/todos/:id", (req, res) => {
+  let idTodo = req.params.id;
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    if(err){
+      console.log(err);
+    }else{
+      let jsonList = JSON.parse(data);
+      let foundTask = false;
+      for(let i=0;i<jsonList.length;i++){
+        if(jsonList[i].id == idTodo){
+          jsonList.splice(i,1);
+          foundTask = true;
+          break;
+        }
+      }
+      if(foundTask){
+        let jsonString = JSON.stringify(jsonList);
+        fs.writeFile("todos.json", jsonString, (err)=>{
+          if(err){
+            console.log(err);
+          }
+        })
+        res.status(200).send(`Task id: ${idTodo} updated`);
+      }else{
+        res.status(404).send("ID not found");
+      }
+      
+    }
+    
+  });
+});
+
+app.all("*", (req, res) =>{
+  res.status(404).send("Not found");
+});
+
+  app.listen(3000);
+
   module.exports = app;
