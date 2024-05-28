@@ -1,6 +1,20 @@
+const jwt = require("jsonwebtoken");
+
 function userMiddleware(req, res, next) {
-    // Implement user auth logic
-    // You need to check the headers and validate the user from the user DB. Check readme for the exact headers to be expected
+    const authToken = req.get("Authorization");
+    if(authToken){
+        const jwtString = authToken.replace("Bearer ", "");
+        try{
+            const jwtRes = jwt.verify(jwtString, "pass123456");
+            res.set("username", jwtRes.username);
+            next();
+        }catch(err){
+            conasole.log(err);
+            res.status(403).send(err);
+        }
+    }else{
+        res.status(403).send("No token");
+    }
 }
 
 module.exports = userMiddleware;

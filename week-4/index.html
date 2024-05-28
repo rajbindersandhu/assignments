@@ -7,19 +7,38 @@
     let todoState = [];
     let oldTodoState = [];
 
-    function addTodoToDom() {
-      
+    function addTodoToDom(todo) {
+      const parentDiv = document.createElement("div");
+      parentDiv.setAttribute("id", `${todo.id}`);
+      const pchild1 = document.createElement("p");
+      pchild1.innerHTML = todo.title;
+      const pchild2 = document.createElement("p");
+      pchild2.innerHTML = todo.description
+      const removeButton = document.createElement("button");
+      removeButton.innerHTML = "Mark as done"
+      removeButton.addEventListener("click", function(){
+        todoState = todoState.filter(task => task.id != todo.id);
+        updateState(todoState);
+      });
+      parentDiv.appendChild(pchild1);
+      parentDiv.appendChild(pchild2);
+      parentDiv.appendChild(removeButton);
+      const grandDiv = document.getElementById("todos");
+      grandDiv.appendChild(parentDiv);
     }
 
     function removeTodoFromDom(todo) {
-      
+      const grandDiv = document.getElementById("todos");
+      grandDiv.removeChild(document.getElementById(`${todo.id}`));
     }
 
-    function updateTodoInDom(oldTodo, newTodo) {
+    // function updateTodoInDom(oldTodo, newTodo) {
         
-    }
+    // }
 
     function updateState(newTodos) {
+      // console.log(newTodos)
+      // console.log(oldTodoState);
       // calculate the diff b/w newTodos and oldTodos.
       // More specifically, find out what todos are - 
       // 1. added
@@ -31,7 +50,37 @@
       // calculate these 3 arrays
       // call addTodo, removeTodo, updateTodo functions on each of the
       // elements
-      oldTodoState = newTodos;
+        
+      if(newTodos.length < oldTodoState.length){
+        for(let i=0;i<oldTodoState.length;i++){
+          const removedTask = newTodos.filter((task) => oldTodoState[i].id == task.id);
+          if(removedTask.length == 0){
+            deleted.push(oldTodoState[i]);
+          }
+        }
+      }
+
+      for(let i=0;i<newTodos.length;i++){
+          const addedTaskList = oldTodoState.filter(task => task.id == newTodos[i].id);
+          if(addedTaskList.length == 0){
+            added.push(newTodos[i])
+          }
+        }
+      if(added.length){
+        for(let i=0;i<added.length;i++){
+          addTodoToDom(added[i])
+        }
+      }
+      if(deleted.length){
+        console.log(`deleted: ${deleted}`);
+        for(let i=0;i<deleted.length;i++){
+          removeTodoFromDom(deleted[i]);
+        }
+      }
+      // if(updated.length){
+
+      // }
+      oldTodoState = [...newTodos];
     }
 
     function addTodo() {
