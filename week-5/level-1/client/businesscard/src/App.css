@@ -1,0 +1,68 @@
+#navBar{
+  display:flex;
+  justify-content: space-between;
+  padding: 1% 5%;
+  /* border: solid black; */
+  background-color: rgb(168, 201, 230);
+}
+
+#card{
+  width: 40%;
+  /* border: solid black; */
+  padding: 1%;
+  margin-top: 2%;
+  margin-left: auto; 
+  margin-right: auto;
+  text-align: center;
+  background-color: blanchedalmond;
+}
+
+#smhandel{
+  margin: 2%;
+  padding: 1% 4%;
+  background-color: lightskyblue;
+  border: none;
+  border-radius: 5%;
+  cursor: pointer;
+}
+
+#create{
+  padding: 1% 2%;
+  height: 100%;
+  align-self: center;
+  border-radius: 5%;
+  border: none;
+  cursor: pointer;
+}
+
+#create-modal{
+  visibility:visible;
+  position: fixed;
+  z-index: 2;
+  top:5px;
+  background-color: gray;
+  align-items: center;
+  height: 95vh;
+  width: 95vw;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#inner{
+  background-color: lightgray;
+  border-radius: 2%;
+  padding: 5%;
+}
+
+#modal-action{
+  margin-top: 2%;
+  padding-right: 2%;
+  width: 50%;
+  display:flex;
+  justify-content: end;
+}
+
+#add-list{
+  margin-right: 2%;
+}
